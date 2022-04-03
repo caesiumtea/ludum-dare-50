@@ -1,2 +1,6 @@
 ld50.cuda-proj
 .tern-project
+.eslintrc*
+package.json
+package-lock.json
+node_modules/
