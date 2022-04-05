@@ -1,8 +1,18 @@
-"use strict"; 
+"use strict";
 
 // this tells linter that idgaf if variables are unused --
 // REMOVE IT WHEN CODE IS COMPLETE and ready for testing!!
 /* eslint no-unused-vars: "off" */
+
+/**********************************
+/  TESTS 
+**********************************/
+
+function test() {
+  inv.push("things", "stuff");
+}
+
+
 
 /**********************************
 / GLOBAL VARIABLES
@@ -13,6 +23,7 @@ let gameEnd = false; //player hasn't finished the game yet
 let daysLeft = 3; //number of playable days left
 let inv = []; //inventory
 let memoriesFound = [];
+let msgLog = []; //log of all text displayed in this playthrough
 
 // these variables will update each game day
 let daysPlayed = 0; //times the player has started a new day
@@ -20,14 +31,33 @@ let numExploresToday = 0;
 let currentPlace = null; //where the player is right now
 let openMenu = null; //is there a gui menu open right now?
 
-////// TESTS! DELETE!!!! //////
-inv.push("things", "stuff");
 
-//////////////
 
 /**********************************
 / DATA
 **********************************/
+
+/******* IMAGES ******/
+const bgs = {
+  "hearth": {
+    "path": "img/bg-hearth.png"
+  },
+  "places": {
+    "path": "img/bg-places.png"
+  },
+  "woods": {
+    "path": "img/bg-woods.png" //TODO
+  },
+  "journal": {
+    "path": "img/bg-journal.png" //TODO
+  }
+};
+
+// needs to be an object instead of array so they can be found with allMems[string] when parsing save data
+const allMems = [
+  "dryadella",
+  "gargoyle"
+];
 
 // number of resources required to cast the time spell
 const spell = {
@@ -73,19 +103,24 @@ const resources = {
 /**********************************
 / GRAPHICS
 **********************************/
+const game = document.getElementById("gameDiv");
+
+/******* HELPERS ******/
+
 // takes name of element id
 function showEl(name) {
   document.getElementById(name).style.display = "block";
 }
 
-//takes a dom node reference and sets innerhtml to empty string
-function emptyEl(elem) {
-  elem.innerHTML = "";
+// takes name of element id
+function hideEl(name) {
+  document.getElementById(name).style.display = "none";
 }
 
-// takes name of element id
-function hideEl(elem) {
-  document.getElementById(elem).style.display = "none";
+//takes a dom node reference, removes innerhtml, and hides element
+function emptyEl(elem) {
+  elem.style.display = "none";
+  elem.innerHTML = "";
 }
 
 // takes name of element class
@@ -96,6 +131,63 @@ function hideClass(name) {
   for (let i=0; i < cls.length; ++i) {cls[i].style.display = "none";}
 }
 
+// advance textboxes to next screen
+function advance(box) {
+  console.log("advance " + box);
+
+}
+
+// this one is for a smaller textbox, e.g. result of actions
+function showTextbox(msg) {
+  msgLog.push(msg);
+
+  let box = document.getElementById("msgBox");
+  let para = document.createElement("p");
+  para.innerText = msg;
+  box.appendChild(para);
+
+  box.onclick = advance(box);
+  box.style.display = "block";
+}
+
+function hideTextbox() {
+  let box = document.getElementById("msgBox");
+  box.style.display = "none";
+  emptyEl(box);
+}
+
+function hideStory() {
+  let box = document.getElementById("storyBox");
+  box.style.display = "none";
+  box.innerHTML = "";
+  console.log("hidestory");
+}
+
+// this one is for long text segments that occupy the whole screen
+function showStory(text) {
+  console.log("show story");
+  let box = document.getElementById("storyBox");
+  
+  let para = document.createElement("p");
+  para.appendChild(document.createTextNode(text));
+  box.appendChild(para);
+  
+  let btn = document.createElement("button");
+  btn.innerText = "continue";
+  btn.onclick = hideStory;
+  box.appendChild(btn);
+  
+  box.style.display = "block"; //show text box
+}
+
+
+
+/*
+function showResult(result, spot) {
+  //TODO - display a message about the result of exploring
+}
+no this is no good, separate the ui from the content */
+
 
 
 /**********************************
@@ -103,34 +195,41 @@ function hideClass(name) {
  **********************************/
 
 
-//TODO define inventory (and spellbook) screen
-
+//inventory and spell requirement screen
 function showInv() {
+  console.log(inv);
   openMenu = "inv";
   let menu = document.getElementById("menuBox");
 
   let title = document.createElement("h3");
   title.innerText = "i have:";
   menu.appendChild(title);
-
   let items = "";
-  for (let i=0; i < inv.length; ++i) {
+  for (let i = 0; i < inv.length - 1; i++) {
     items += `${inv[i]}, `;
   }
   if (inv.length >= 1) {
-    items += `${inv[-1]}`;
-  } 
+    items += `${inv[inv.length - 1]}`;
+  }
   let content = document.createElement("p");
   content.innerText = items;
   menu.appendChild(content);
+  //console.log(items);
+
+  menu.appendChild(document.createElement("hr"));
+  let reqH = document.createElement("h3");
+  reqH.innerText = "requirements for the spell:";
+  menu.appendChild(reqH);
+  let reqP = document.createElement("p");
+  reqP.innerText = "4 smooth stones, feathers, blah blah";
+  menu.appendChild(reqP);
 
   showEl("menuBox");
 }
 
 function hideInv() {
   let menu = document.getElementById("menuBox");
-  hideEl("menuBox");
-  emptyEl(menu);
+  emptyEl(menu); //includes hiding box
   openMenu = null;
 }
 
@@ -140,59 +239,49 @@ function toggleInv() {
 }
 
 //TODO new day (and game start) screen
+function showDefault() {}
 
 //TODO day planner screen
+function showPlanner() {}
 
 //TODO map screen (start with woods, add another for town later)
+function showMap() {}
 
 //TODO hearth (spellcasting) screen
+function showHearth() {
+  let path = bgs.hearth.path;
+  game.setAttribute("background-image", path);
+}
 
 //TODO game end scrapbook screen 
+function showScrapbook() {}
+
+
+/**********************************
+* STORY
+***********************************/
+
+const story = {
+  intro1: {
+    text: "intro p 1",
+    next: "intro2"
+  },
+  intro2: {
+    text: "intro p 2",
+    next: null
+  },
+  ending: {
+    text: "",
+    next: null
+  }
+};
+
 
 
 
 /**********************************
- / UI
- **********************************/
-
-//TODO 'check inventory' button (should always be on screen)
-
-/*
-function showResult(result, spot) {
-  //TODO - display a message about the result of exploring
-}
-no this is no good, separate the ui from the content */
-
-// this one is for a smaller textbox, e.g. result of actions
-function showTextbox(msg) {}
-
-function hideStory() {
-  let box = document.getElementById("storyBox");
-  box.style.display = "none";
-  box.innerHTML = "";
-}
-
-// this one is for long text segments that occupy the whole screen
-function showStory(text) {
-  console.log("show story");
-  let box = document.getElementById("storyBox");
-
-  let para = document.createElement("p");
-  para.appendChild(document.createTextNode(text));
-  box.appendChild(para);
-
-  let btn = document.createElement("button");
-  btn.innerText = "continue";
-  btn.onclick = hideStory;
-  box.appendChild(btn);
-
-  box.style.display = "block"; //show text box
-}
-
-
-/**********************************
- / LOGIC
- **********************************/
+* LOGIC
+***********************************/
 
 const dailyChances = 3; // how many times per day player can gather resources or click a place on a map
 
@@ -233,6 +322,7 @@ function newDay() {
   planDay();
 }
 
+
 function endGame() {
   //TODO display ending text
   
@@ -242,9 +332,49 @@ function endGame() {
 function playIntro() {
   let intro = "I can't believe it's the end of my study abroad trip already!"; 
   // might need an array of strings if too long to show all at once
-  // call ui function like showStory(intro) or smth
   showStory(intro);
+  console.log("done intro");
 }
+
+// read localStorage for memories found and mark those memories found for current run
+function checkMems() {
+  let result = [];
+  let save = localStorage.getItem("memoriesFound"); //it's a string
+  if (save) { //skip if no save data exists - save will be null which evaluates false
+    /*loop over allMems
+    if (save.includes(allMems[i])) {result.push(allMems[i])} */
+    if (save.includes("gargoyle")) {result.push("gargoyle");}
+    if (save.includes("dryadella")) {result.push("dryadella");}
+  }
+  //console.log(result);
+  return result; //will be [] if no save data
+}
+
+/* /TODO what the fuck am i even doingn
+function checkSave(key) {
+  let data = localStorage.getItem(key);
+  if (data) { //false if data=null
+    return [];
+  }
+  return []; 
+} */
+
+//TODO 
+function storeMems() {}
+
+/* wanted to make a generic data saver but im really confused about 
+types in js and it doesnt matter anyway since for now memories are the only
+data we wanna save to localstorage anyway SHRUGGES
+// key should be the name of an existing iterable 
+function storeSave(key) {
+  let arr = key;
+  let string = "";
+  for (let i=0; i < arr.length; i++) {
+    string += ` ${arr[i]} `;
+  }
+  localStorage.setItem(key, string);
+} */ 
+
 
 /**********************************
 / START
@@ -265,15 +395,17 @@ function start() {
   gameEnd = false; //game is in progress
   daysLeft = 3; //number of playable days
   inv = []; //inventory
-  memoriesFound = [];
-  
+  memoriesFound = checkMems();
+  msgLog = []; //log of all text displayed in this playthrough
+
+  test();
   playIntro();
-  // CORE GAME LOOP
-  //while(!gameEnd) {
-    //newDay();
-    //finishDay();
-  //}
-  //endGame(); 
+  /* // CORE GAME LOOP
+  while(!gameEnd) {
+    newDay();
+    finishDay();
+  }
+  endGame(); */
   
 }
 
