@@ -1,3 +1,8 @@
+/* this us just like.. a bunch of crap i tried that didn't work
+** that i'm holding onto in case i find out later that actually
+** it would have worked or smth....... 
+** it'll go away later,,    */
+
 "use strict";
 
 // this tells linter that idgaf if variables are unused --
@@ -9,7 +14,7 @@
 **********************************/
 
 function test() {
-  gameState.inv.push("things", "stuff");
+  inv.push("things", "stuff");
 }
 
 
@@ -17,17 +22,19 @@ function test() {
 /**********************************
 / GLOBAL VARIABLES
 **********************************/
-let gameState = {
-  phase: "intro", //others: 
-  daysLeft: 3,
-  daysPlayed: 0,
-  numExploresToday: 0,
-  inv: [],
-  memoriesFound: [],
-  msgLog: [],
-  openMenu: null
-};
 
+// these ones will be assigned when the game starts
+let gameEnd = false; //player hasn't finished the game yet
+let daysLeft = 3; //number of playable days left
+let inv = []; //inventory
+let memoriesFound = [];
+let msgLog = []; //log of all text displayed in this playthrough
+
+// these variables will update each game day
+let daysPlayed = 0; //times the player has started a new day
+let numExploresToday = 0;
+let currentPlace = null; //where the player is right now
+let openMenu = null; //is there a gui menu open right now?
 
 
 
@@ -129,9 +136,15 @@ function hideClass(name) {
   for (let i=0; i < cls.length; ++i) {cls[i].style.display = "none";}
 }
 
+// advance textboxes to next screen
+function advance(box) {
+  console.log("advance " + box);
+
+}
+
 // this one is for a smaller textbox, e.g. result of actions
 function showTextbox(msg) {
-  gameState.msgLog.push(msg);
+  msgLog.push(msg);
 
   let box = document.getElementById("msgBox");
   let para = document.createElement("p");
@@ -189,19 +202,19 @@ no this is no good, separate the ui from the content */
 
 //inventory and spell requirement screen
 function showInv() {
-  console.log(gameState.inv);
-  gameState.openMenu = "inv";
+  console.log(inv);
+  openMenu = "inv";
   let menu = document.getElementById("menuBox");
 
   let title = document.createElement("h3");
   title.innerText = "i have:";
   menu.appendChild(title);
   let items = "";
-  for (let i = 0; i < gameState.inv.length - 1; i++) {
-    items += `${gameState.inv[i]}, `;
+  for (let i = 0; i < inv.length - 1; i++) {
+    items += `${inv[i]}, `;
   }
-  if (gameState.inv.length >= 1) {
-    items += `${gameState.inv[gameState.inv.length - 1]}`;
+  if (inv.length >= 1) {
+    items += `${inv[inv.length - 1]}`;
   }
   let content = document.createElement("p");
   content.innerText = items;
@@ -222,11 +235,11 @@ function showInv() {
 function hideInv() {
   let menu = document.getElementById("menuBox");
   emptyEl(menu); //includes hiding box
-  gameState.openMenu = null;
+  openMenu = null;
 }
 
 function toggleInv() {
-  if (gameState.openMenu == "inv") {hideInv();}
+  if (openMenu == "inv") {hideInv();}
   else {showInv();}
 }
 
@@ -253,10 +266,9 @@ function showScrapbook() {}
 * STORY
 ***********************************/
 
-//add a prop for textbox type?
 const story = {
   intro1: {
-    text: "I can't believe it's the last week of my study abroad trip already!",
+    text: "intro p 1",
     next: "intro2"
   },
   intro2: {
@@ -303,22 +315,30 @@ function planDay() {
 }
 
 function finishDay() {
-  gameState.daysLeft--;
-  gameState.daysPlayed++;
+  daysLeft--;
+  daysPlayed++;
   //TODO go to hearth screen if appropriate 
 }
 
 function newDay() {
-  gameState.phase = "newDay";
-  gameState.numExploresToday = 0;
-  gameState.openMenu = null;
+  numExploresToday = 0;
+  currentPlace = null;
+  openMenu = null;
   planDay();
 }
 
 
 function endGame() {
   //TODO display ending text
-  gameState.phase = "ending";
+  
+}
+
+//TODO display opening text
+function playIntro() {
+  let intro = "I can't believe it's the end of my study abroad trip already!"; 
+  // might need an array of strings if too long to show all at once
+  showStory(intro);
+  console.log("done intro");
 }
 
 // read localStorage for memories found and mark those memories found for current run
@@ -335,12 +355,39 @@ function checkMems() {
   return result; //will be [] if no save data
 }
 
+/* /TODO what the fuck am i even doingn
+function checkSave(key) {
+  let data = localStorage.getItem(key);
+  if (data) { //false if data=null
+    return [];
+  }
+  return []; 
+} */
+
 //TODO 
 function storeMems() {}
+
+/* wanted to make a generic data saver but im really confused about 
+types in js and it doesnt matter anyway since for now memories are the only
+data we wanna save to localstorage anyway SHRUGGES
+// key should be the name of an existing iterable 
+function storeSave(key) {
+  let arr = key;
+  let string = "";
+  for (let i=0; i < arr.length; i++) {
+    string += ` ${arr[i]} `;
+  }
+  localStorage.setItem(key, string);
+} */ 
+
 
 /**********************************
 / START
 **********************************/
+//render game window
+function render() {
+  console.log("render");
+}
 
 //start game
 function start() {
@@ -350,13 +397,20 @@ function start() {
   hideEl("titleCard");
 
   // set variables to "new game" values
-  gameState.daysLeft = 3; //number of playable days
-  gameState.inv = []; //inventory
-  gameState.memoriesFound = checkMems();
-  gameState.msgLog = []; //log of all text displayed in this playthrough
+  gameEnd = false; //game is in progress
+  daysLeft = 3; //number of playable days
+  inv = []; //inventory
+  memoriesFound = checkMems();
+  msgLog = []; //log of all text displayed in this playthrough
 
   test();
-  advance();
+  playIntro();
+  /* // CORE GAME LOOP
+  while(!gameEnd) {
+    newDay();
+    finishDay();
+  }
+  endGame(); */
   
 }
 
