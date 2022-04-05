@@ -5,11 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="caesiumtea">
     <meta name="description" content="a game for ludum dare 50">
-    <title>ludum dare 50 | an entropic game</title>
+    <title>last week of witch school study abroad | an entropic game</title>
     <link href="style.css" rel="stylesheet" type="text/css">
-  </head>
-<body onload="draw();">
-  <canvas id="game" width="600" height="600"></canvas>
+  </head> 
+<!-- <body onload="draw();">
+  <canvas id="game" width="600" height="600"></canvas> -->
+<body>
+  <div id="gameDiv">
+    <button id="invBtn" onclick="toggleInv();">inventory</button>
+    <div id="menuBox" class="uiDiv"></div>
+    <div id="titleCard" class="uiDiv">
+      <h1>last week of<br>witch school<br>study abroad</h1>
+      <button id="startBtn" onclick="start();">start</button>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur voluptates harum at omnis porro tempora deserunt inventore vero in veniam fuga aperiam magnam cupiditate, commodi quos est culpa aliquid unde?
+      Veniam reiciendis culpa delectus amet. Eligendi repudiandae expedita, ratione illum quidem animi omnis nam quasi libero est fugiat facere aspernatur fugit tempora recusandae fuga, consequuntur ducimus? Eum officia delectus facilis.
+      Laboriosam, praesentium porro. Ea aliquam quo saepe repellat cupiditate consequatur, fugit quae neque omnis eos, rerum esse itaque est tenetur quos explicabo facere eius molestiae. Dignissimos laborum distinctio cupiditate optio.
+      Aperiam quas magni ex accusamus dolorum perferendis mollitia veritatis ipsum maxime pariatur. Dolorum quisquam, officiis fugiat saepe distinctio quam deleniti recusandae enim totam? Atque quis voluptas, velit neque facere quae?
+      Fugit placeat et odit. Quasi reprehenderit rerum cum. Molestias, ad maxime! Tempora nulla odit recusandae harum mollitia deserunt iusto asperiores sunt ex sit, debitis molestias, quisquam non velit illo tenetur!</p>
+    </div>
+    <div id="metaBox" class="uiDiv">
+      
+    </div>
+    <div id="storyBox" class="uiDiv">
+      
+    </div>
+    <div id="msgBox" class="uiDiv">
+    </div>
+    <div id="sprite" class="uiDiv"></div>
+    
+    <!--<button class="continueBtn">continue</button>-->
+
+
+  </div>
   <script src="game.js" type="application/javascript"></script>
 </body>
 </html>

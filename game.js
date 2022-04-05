@@ -18,7 +18,12 @@ let memoriesFound = [];
 let daysPlayed = 0; //times the player has started a new day
 let numExploresToday = 0;
 let currentPlace = null; //where the player is right now
+let openMenu = null; //is there a gui menu open right now?
 
+////// TESTS! DELETE!!!! //////
+inv.push("things", "stuff");
+
+//////////////
 
 /**********************************
 / DATA
@@ -27,29 +32,39 @@ let currentPlace = null; //where the player is right now
 // number of resources required to cast the time spell
 const spell = {
   "feathers": 5,
-  "buds": 20,
-  "twigs": 10
+  "flowers": 20,
+  "twigs": 10,
+  "stones": 4
 };
 // TODO med priority: make multiple versions of spell for high-low quality
 
-
+const spellText = [
+  "Seven feathers of the -",
+  "Four stones even and smooth, all edges washed away by the water's ebb and flow, shall bear the memory ",
+  "Thirteen blossoms of morning glory "
+];
 
 // resources, AKA items that can be repeatedly foraged
 const resources = {
   "feathers": {
     "name": "feathers",
     "maxForage": 3,
-    "whereFound": ["tree", "bush"] 
+    "whereFound": ["tree", "bush"]
   },
-  "buds": {
-    "name": "flower buds",
-    "maxForage": 8,
+  "flowers": {
+    "name": "flower petals",
+    "maxForage": 5,
     "whereFound": ["tree", "bush"] 
   },
   "twigs": {
     "name": "cedar twigs",
     "maxForage": 5,
     "whereFound": ["tree", "bush"]
+  },
+  "stones": {
+    "name": "smooth stones",
+    "maxForage": 3,
+    "whereFound": ["lake"]
   }
 };
 
@@ -58,13 +73,27 @@ const resources = {
 /**********************************
 / GRAPHICS
 **********************************/
+// takes name of element id
+function showEl(name) {
+  document.getElementById(name).style.display = "block";
+}
 
-//TODO decide whether to use canvas or normal elements!!
-function draw() {
-  let canvas = document.getElementById("game");
-  if (canvas.getContext) {
-    let ctx = canvas.getContext("2d");
-  }
+//takes a dom node reference and sets innerhtml to empty string
+function emptyEl(elem) {
+  elem.innerHTML = "";
+}
+
+// takes name of element id
+function hideEl(elem) {
+  document.getElementById(elem).style.display = "none";
+}
+
+// takes name of element class
+function hideClass(name) {
+  let cls = document.getElementsByClassName(name);
+  console.log(cls);
+  //cls.style.display = "none";
+  for (let i=0; i < cls.length; ++i) {cls[i].style.display = "none";}
 }
 
 
@@ -73,7 +102,42 @@ function draw() {
  / SCREENS
  **********************************/
 
+
 //TODO define inventory (and spellbook) screen
+
+function showInv() {
+  openMenu = "inv";
+  let menu = document.getElementById("menuBox");
+
+  let title = document.createElement("h3");
+  title.innerText = "i have:";
+  menu.appendChild(title);
+
+  let items = "";
+  for (let i=0; i < inv.length; ++i) {
+    items += `${inv[i]}, `;
+  }
+  if (inv.length >= 1) {
+    items += `${inv[-1]}`;
+  } 
+  let content = document.createElement("p");
+  content.innerText = items;
+  menu.appendChild(content);
+
+  showEl("menuBox");
+}
+
+function hideInv() {
+  let menu = document.getElementById("menuBox");
+  hideEl("menuBox");
+  emptyEl(menu);
+  openMenu = null;
+}
+
+function toggleInv() {
+  if (openMenu == "inv") {hideInv();}
+  else {showInv();}
+}
 
 //TODO new day (and game start) screen
 
@@ -102,8 +166,28 @@ no this is no good, separate the ui from the content */
 // this one is for a smaller textbox, e.g. result of actions
 function showTextbox(msg) {}
 
+function hideStory() {
+  let box = document.getElementById("storyBox");
+  box.style.display = "none";
+  box.innerHTML = "";
+}
+
 // this one is for long text segments that occupy the whole screen
-function showStory(text) {}
+function showStory(text) {
+  console.log("show story");
+  let box = document.getElementById("storyBox");
+
+  let para = document.createElement("p");
+  para.appendChild(document.createTextNode(text));
+  box.appendChild(para);
+
+  let btn = document.createElement("button");
+  btn.innerText = "continue";
+  btn.onclick = hideStory;
+  box.appendChild(btn);
+
+  box.style.display = "block"; //show text box
+}
 
 
 /**********************************
@@ -145,6 +229,7 @@ function finishDay() {
 function newDay() {
   numExploresToday = 0;
   currentPlace = null;
+  openMenu = null;
   planDay();
 }
 
@@ -155,16 +240,27 @@ function endGame() {
 
 //TODO display opening text
 function playIntro() {
-  let intro = ""; // might need an array of strings if too long to show all at once
+  let intro = "I can't believe it's the end of my study abroad trip already!"; 
+  // might need an array of strings if too long to show all at once
   // call ui function like showStory(intro) or smth
+  showStory(intro);
 }
 
 /**********************************
 / START
 **********************************/
-// initialize core variables
+//render game window
+function render() {
+  console.log("render");
+}
 
+//start game
 function start() {
+  console.log("starting");
+
+  showEl("invBtn");
+  hideEl("titleCard");
+
   // set variables to "new game" values
   gameEnd = false; //game is in progress
   daysLeft = 3; //number of playable days
@@ -173,11 +269,11 @@ function start() {
   
   playIntro();
   // CORE GAME LOOP
-  while(!gameEnd) {
-    newDay();
-    finishDay();
-  }
-  endGame(); 
+  //while(!gameEnd) {
+    //newDay();
+    //finishDay();
+  //}
+  //endGame(); 
   
 }
 
