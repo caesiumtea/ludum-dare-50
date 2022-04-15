@@ -1,0 +1,14 @@
+{
+    "intro1": {
+        "text": "I can't believe it's the last week of my study abroad trip already!",
+        "next": "intro2"
+    },
+    "intro2": {
+        "text": "intro p 2",
+        "next": null
+    },
+    "ending": {
+        "text": "",
+        "next": null
+    }
+}
