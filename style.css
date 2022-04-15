@@ -7,15 +7,15 @@ body {
 }
 
 /*
+button {}
 p {
 	text-align: left;
 } */
 
-button {}
 
-/* #game {
+#game {
 	background: mediumpurple;
-} */
+}
 
 .uiDiv {
 	background-color: indigo;

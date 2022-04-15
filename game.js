@@ -101,7 +101,23 @@ const resources = {
 /**********************************
 / GRAPHICS
 **********************************/
-const game = document.getElementById("gameDiv");
+function draw() {
+  //const canvas = document.querySelector("canvas");
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 600;
+  canvas.height = 600;
+
+  const bg = new Image();
+  bg.src = "img/bg-hearth.png";
+
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  bg.onload = () => {
+    ctx.drawImage(bg, 0, 0);
+  };
+
+}
 
 /******* HELPERS ******/
 
