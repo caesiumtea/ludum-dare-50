@@ -419,15 +419,25 @@ function start() {
 / temp reference!!! delete this!
 **********************************/
 
-// localStorage.setItem('memories', memories)
-//if(!localStorage.getItem('name')) {
-//  setUserName();
-//} else {
-//  let storedName = localStorage.getItem('name');
-//}
+localStorage.setItem('memories', memories)
+if(!localStorage.getItem('name')) {
+ setUserName();
+} else {
+ let storedName = localStorage.getItem('name');
+}
 
-// class Resource {
-//   constructor(noun, maxForage, whereFound) {
+class Resource {
+  constructor(noun, maxForage, whereFound) {
     
-//   }
-// }
+  }
+}
+
+//react to a specific keypress
+window.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "a":
+      break;
+    case "q":
+      break;
+  }
+});

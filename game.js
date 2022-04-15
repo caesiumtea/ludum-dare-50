@@ -121,29 +121,6 @@ function draw() {
 
 /******* HELPERS ******/
 
-// takes name of element id
-function showEl(name) {
-  document.getElementById(name).style.display = "block";
-}
-
-// takes name of element id
-function hideEl(name) {
-  document.getElementById(name).style.display = "none";
-}
-
-//takes a dom node reference, removes innerhtml, and hides element
-function emptyEl(elem) {
-  elem.style.display = "none";
-  elem.innerHTML = "";
-}
-
-// takes name of element class
-function hideClass(name) {
-  let cls = document.getElementsByClassName(name);
-  console.log(cls);
-  //cls.style.display = "none";
-  for (let i=0; i < cls.length; ++i) {cls[i].style.display = "none";}
-}
 
 // this one is for a smaller textbox, e.g. result of actions
 function showTextbox(msg) {
@@ -159,43 +136,24 @@ function showTextbox(msg) {
 }
 
 function hideTextbox() {
-  let box = document.getElementById("msgBox");
-  box.style.display = "none";
-  emptyEl(box);
 }
 
 function hideStory() {
-  let box = document.getElementById("storyBox");
-  box.style.display = "none";
-  box.innerHTML = "";
   console.log("hidestory");
 }
 
 // this one is for long text segments that occupy the whole screen
 function showStory(text) {
   console.log("show story");
-  let box = document.getElementById("storyBox");
-  
-  let para = document.createElement("p");
-  para.appendChild(document.createTextNode(text));
-  box.appendChild(para);
-  
-  let btn = document.createElement("button");
-  btn.innerText = "continue";
-  btn.onclick = hideStory;
-  box.appendChild(btn);
-  
-  box.style.display = "block"; //show text box
+
 }
 
 
 
-/*
-function showResult(result, spot) {
-  //TODO - display a message about the result of exploring
-}
-no this is no good, separate the ui from the content */
-
+//on any keypress, continue to next screen
+window.addEventListener("keydown", () => {
+  advance();
+});
 
 
 /**********************************
@@ -207,11 +165,9 @@ no this is no good, separate the ui from the content */
 function showInv() {
   console.log(gameState.inv);
   gameState.openMenu = "inv";
-  let menu = document.getElementById("menuBox");
+  //let menu = document.getElementById("menuBox");
 
-  let title = document.createElement("h3");
-  title.innerText = "i have:";
-  menu.appendChild(title);
+  // title.innerText = "i have:";
   let items = "";
   for (let i = 0; i < gameState.inv.length - 1; i++) {
     items += `${gameState.inv[i]}, `;
@@ -219,25 +175,17 @@ function showInv() {
   if (gameState.inv.length >= 1) {
     items += `${gameState.inv[gameState.inv.length - 1]}`;
   }
-  let content = document.createElement("p");
-  content.innerText = items;
-  menu.appendChild(content);
   //console.log(items);
 
-  menu.appendChild(document.createElement("hr"));
-  let reqH = document.createElement("h3");
-  reqH.innerText = "requirements for the spell:";
-  menu.appendChild(reqH);
-  let reqP = document.createElement("p");
-  reqP.innerText = "4 smooth stones, feathers, blah blah";
-  menu.appendChild(reqP);
+  // "requirements for the spell:";
+  // "4 smooth stones, feathers, blah blah";
 
-  showEl("menuBox");
+  // showEl("menuBox");
 }
 
 function hideInv() {
-  let menu = document.getElementById("menuBox");
-  emptyEl(menu); //includes hiding box
+  //let menu = document.getElementById("menuBox");
+  
   gameState.openMenu = null;
 }
 
@@ -258,7 +206,6 @@ function showMap() {}
 //TODO hearth (spellcasting) screen
 function showHearth() {
   let path = bgs.hearth.path;
-  game.setAttribute("background-image", path);
 }
 
 //TODO game end scrapbook screen 
@@ -354,6 +301,8 @@ function checkMems() {
 //TODO 
 function storeMems() {}
 
+
+
 /**********************************
 / START
 **********************************/
@@ -362,8 +311,8 @@ function storeMems() {}
 function start() {
   console.log("starting");
 
-  showEl("invBtn");
-  hideEl("titleCard");
+  // showEl("invBtn");
+  // hideEl("titleCard");
 
   // set variables to "new game" values
   gameState.daysLeft = 3; //number of playable days
