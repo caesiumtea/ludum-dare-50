@@ -35,6 +35,22 @@ let gameState = {
 / DATA
 **********************************/
 
+class Resource {
+  constructor({noun, maxForage, where}) {
+    this.noun = noun;
+    this.maxForage = maxForage;
+    this.whereFound = where;
+  }
+}
+
+class Place {
+  constructor({title, bg, hotspots}) {
+    this.title = title;
+    this.bgImg = bg;
+    this.hotspots = hotspots;
+  }
+}
+
 /******* IMAGES ******/
 const bgs = {
   "hearth": {
@@ -155,6 +171,13 @@ window.addEventListener("keydown", () => {
   advance();
 });
 
+//on any keypress, continue to next screen
+window.addEventListener("keydown", () => {
+  advance();
+});
+
+//TODO - decides what screen to show next in response to player action
+function advance() {}
 
 /**********************************
  / SCREENS
