@@ -117,20 +117,38 @@ const resources = {
 /**********************************
 / GRAPHICS
 **********************************/
-function draw() {
-  //const canvas = document.querySelector("canvas");
-  const canvas = document.getElementById("game");
-  const ctx = canvas.getContext("2d");
-  canvas.width = 600;
-  canvas.height = 600;
+const canvas = document.getElementById("game");
+//const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = 600;
+canvas.height = 600;
 
-  const bg = new Image();
-  bg.src = "img/bg-hearth.png";
+class Sprite {
+  constructor({x, y, img}) {
+    this.xpos = x;
+    this.ypos = y;
+    this.img = img;
+  }
+
+  draw() {
+    ctx.drawImage(this.img, this.xpos, this.ypos);
+  }
+}
+
+function render() {
+  const bgImg = new Image();
+  bgImg.src = "img/bg-hearth.png";  
+  let bg = new Sprite({
+    x: 0,
+    y: 0,
+    img: bgImg
+  });
+  
 
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  bg.onload = () => {
-    ctx.drawImage(bg, 0, 0);
+  bgImg.onload = () => {
+    bg.draw();
   };
 
 }
